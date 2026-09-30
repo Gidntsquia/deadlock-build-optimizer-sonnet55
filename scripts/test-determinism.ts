@@ -14,7 +14,7 @@ for (const hero of loadHeroes()) {
     if (a !== b) fail(`${hero.name}: reruns differ (median ${median})`)
   }
   const out = generateBuilds(hero, catalog, an, { medianMatchMin: null })
-  if (out.builds.length < 2) fail(`${hero.name}: ${out.builds.length} builds`)
+  if (out.builds.length !== 1) fail(`${hero.name}: ${out.builds.length} builds`)
   for (const build of out.builds) {
     if (build.items.length < 12) fail(`${hero.name}/${build.name}: ${build.items.length} items`)
     if (build.abilityOrder.length !== 16) fail(`${hero.name}/${build.name}: ${build.abilityOrder.length} ability steps`)
@@ -26,4 +26,4 @@ for (const hero of loadHeroes()) {
   console.log('ok', hero.name, out.builds.map((b) => `${b.items.length}i/${b.totalCost}`).join(' '))
 }
 if (failures) { console.error(`${failures} failure(s)`); process.exit(1) }
-console.log('All heroes: deterministic, ≥2 builds, ≥12 items, 16 ability steps.')
+console.log('All heroes: deterministic, one build, ≥12 items, 16 ability steps.')

@@ -6,7 +6,7 @@ import type { Slot } from './types'
 
 export const WEIGHTS = {
   wr: 1.0, // tier-normalised win-rate lift
-  use: 0.8, // usage (pick) rate
+  use: 2.4, // usage (pick) rate
   val: 0.7, // stat value per soul, tier-normalised
   kit: 0.6, // fit with the hero's kit (stat multipliers from assets data)
   syn: 0.5, // pair synergy with items already chosen (permutation stats)

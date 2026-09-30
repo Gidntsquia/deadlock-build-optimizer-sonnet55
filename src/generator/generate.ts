@@ -4,7 +4,7 @@
 //   - item catalog + hero data (assets API snapshots)
 //   - per-hero item-stats (all ranks and high-badge), ability-order-stats, pair (permutation) stats
 //   - optional personalization: the player's median match length
-// Output: >=2 named builds, each with an ordered buy list (early/mid/late, running soul total)
+// Output: one named build, each with an ordered buy list (early/mid/late, running soul total)
 // and an ability level-up order. No randomness, no clock, no I/O: same inputs => same output.
 
 import {
@@ -415,15 +415,18 @@ export function generateBuilds(
   const medianMin = options.medianMatchMin && options.medianMatchMin > 5 ? options.medianMatchMin : DEFAULT_MATCH_MIN
   const budget = SOULS_PER_MIN * medianMin
 
-  const used = new Set<string>()
-  const builds: Build[] = []
+  // Every archetype is built, then the one whose items score best on aggregate data (mean item score)
+  // is kept. Ties go to the earlier archetype. Nothing here looks at any single player's matches.
+  const candidates: Build[] = []
   for (const arch of ARCHETYPES) {
-    const pick = pickAbilityOrder(hero, analytics.orders, arch.abilityFocus, used)
-    if (pick) used.add(pick.order.abilities.join(','))
+    const pick = pickAbilityOrder(hero, analytics.orders, arch.abilityFocus, new Set())
     const ability = pick
       ? { steps: toSteps(hero, pick.order.abilities), matches: pick.order.matches, wr: pick.wr }
       : { steps: [], matches: 0, wr: 0 }
-    builds.push(buildOne(arch, kit, rows, catalog, pairLift, budget, ability))
+    candidates.push(buildOne(arch, kit, rows, catalog, pairLift, budget, ability))
   }
+  const mean = (b: Build) => b.items.reduce((a, i) => a + i.score, 0) / Math.max(1, b.items.length)
+  const best = candidates.reduce((a, b) => (mean(b) > mean(a) + 1e-12 ? b : a))
+  const builds = [best]
   return { heroId: hero.id, heroName: hero.name, kitNotes: kit.notes, medianMatchMin: medianMin, budget, builds }
 }

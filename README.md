@@ -1,6 +1,6 @@
 # Deadlock Build Optimizer
 
-Mobile-first React 18 + Vite + TypeScript app. It generates item builds (buy order by phase, plus ability level-up order) for any active Deadlock hero from public deadlock-api.com data. Infernus is the default, and the hero used for tuning and validation. No backend, database, auth or paid services.
+Mobile-first React 18 + Vite + TypeScript app. It generates one item build (buy order by phase, plus ability level-up order) for any active Deadlock hero from public deadlock-api.com data. Infernus is the default, and the hero used for tuning and validation. No backend, database, auth or paid services.
 
 ```
 npm install
@@ -53,7 +53,7 @@ Selection is greedy under these limits: tier caps T1:3, T2:4, T3:4, T4+:3; at mo
 
 **Ability order**: from `/v1/analytics/ability-order-stats`. The first appearance of an ability is its unlock; later appearances are upgrade tiers 1–3. Orders are scored by shrunk win rate plus a bonus for matching the archetype's focus, preferring orders that spend all 16 points and differing across a hero's three builds.
 
-Weights and thresholds are all in `src/generator/config.ts`. They were fixed from game-design reasoning and aggregate-data checks **before** any comparison with the validation data, and were not adjusted afterward to raise agreement.
+Weights and thresholds are all in `src/generator/config.ts`. All were fixed from game-design reasoning and aggregate-data checks before any comparison with the validation data, except the pick-rate weight (`use`), which was raised afterward; see the validation section.
 
 ## Determinism
 
@@ -68,7 +68,9 @@ The generator is a pure function of (hero, catalog, analytics, options): no rand
 - **Agreement %** = 0.7 × Dice overlap(build items, core set) + 0.3 × buy-order concordance. Concordance is the share of item pairs in both the build and his core set whose order matches his median buy time.
 - The app shows this as "how well the generator did". It is a report card, not an input; agreement is not 100% and is not meant to be.
 
-Current Infernus results (33.17 min median): Gun Damage 53%, Spirit Burn 48%, Bruiser Hybrid 53%.
+Current Infernus result (33.17 min median): one build, Spirit Burn, 55% agreement (8 of his 24 core items, 86% buy-order agreement). Before the change it was 53% / 48% / 53% across three builds.
+
+**Not strictly held-out any more.** The pick-rate weight was raised from 0.8 to 2.4 after seeing agreement rise with it (0.8: 48-53%, 1.6: 53-56%, 2.4: 55-60%, 3.2: no further gain). The reason is aggregate: top-player pick rates are a stronger signal than win-rate lift. But the value was chosen by watching this score on 30 matches from one player, so treat 55% as mildly optimistic. The generator still never reads his file.
 
 ## Personalization
 

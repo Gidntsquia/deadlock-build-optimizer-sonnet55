@@ -65,7 +65,7 @@ export default function App() {
 
       {result && build && (
         <main>
-          <div className="tabs" role="tablist" aria-label="Builds">
+          {result.builds.length > 1 && <div className="tabs" role="tablist" aria-label="Builds">
             {result.builds.map((b) => {
               const v = validations?.get(b.key)
               return (
@@ -75,7 +75,7 @@ export default function App() {
                 </button>
               )
             })}
-          </div>
+          </div>}
 
           <section className="card summary">
             <h2>{build.name}</h2>
