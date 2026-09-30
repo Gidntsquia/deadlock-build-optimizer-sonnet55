@@ -14,7 +14,7 @@ After `fetch-data`, the app and `npm run build` work fully offline. Snapshots ar
 ## What you see
 
 - Hero picker (bottom sheet grid). Opens on Infernus.
-- 3 named builds per hero: **Gun Damage**, **Spirit Burn** (named **Spirit Power** if the hero has no damage-over-time ability), **Bruiser Hybrid**.
+- One build per hero, picked from three candidates (Gun Damage, Spirit Burn or Spirit Power, Bruiser Hybrid) by the best mean item score on aggregate data.
 - Each build: 12–14 items grouped Early / Mid / Late, with per-item cost, running soul total, and the shop image.
 - Ability order: unlock order, a 16-step level-up sequence, and upgrade tiers per ability, with real ability names and icons.
 - Tap an item for a detail card: image, cost, tier, slot type, stats, passive/active text, components, and why the generator picked it.
@@ -57,7 +57,7 @@ Weights and thresholds are all in `src/generator/config.ts`. All were fixed from
 
 ## Determinism
 
-The generator is a pure function of (hero, catalog, analytics, options): no randomness, no clocks, and every tie is broken by item id. Rerunning gives identical output. `npm test` runs every hero twice (with and without a personal median) and compares the JSON byte for byte, and checks ≥2 builds, ≥12 items, 16 ability steps, no duplicate or non-shopable items.
+The generator is a pure function of (hero, catalog, analytics, options): no randomness, no clocks, and every tie is broken by item id. Rerunning gives identical output. `npm test` runs every hero twice (with and without a personal median) and compares the JSON byte for byte, and checks one build, ≥12 items, 16 ability steps, no duplicate or non-shopable items.
 
 ## Validation against Zergggy (held-out)
 
