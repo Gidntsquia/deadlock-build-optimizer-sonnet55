@@ -28,7 +28,7 @@ export default function BuildView({ build, catalog, validation, onOpenItem }: Pr
               <span>{ph.title}</span>
               <small>{ph.hint} · {souls(phaseCost)} souls</small>
             </h3>
-            <ul>
+            <ul className="tiles">
               {items.map((bi) => <ItemRow key={bi.id} bi={bi} item={catalog.get(bi.id)!} validation={validation} onOpen={onOpenItem} n={build.items.indexOf(bi) + 1} />)}
             </ul>
           </section>
@@ -38,22 +38,22 @@ export default function BuildView({ build, catalog, validation, onOpenItem }: Pr
   )
 }
 
+const ROMAN = ['', 'I', 'II', 'III', 'IV']
+
 function ItemRow({ bi, item, validation, onOpen, n }: { bi: BuildItem; item: CatalogItem; validation?: BuildValidation; onOpen: (id: number) => void; n: number }) {
   const v = validation?.badges.get(bi.id)
   return (
     <li>
-      <button className="item-row" data-item-id={bi.id} onClick={() => onOpen(bi.id)} aria-label={`${bi.name}, ${souls(bi.cost)} souls. Open details`}>
-        <span className="item-n">{n}</span>
-        <img className={`item-img slot-${bi.slot}`} src={img(item.image)} alt={bi.name} width={48} height={48} />
-        <span className="item-main">
-          <span className="item-name">{bi.name}</span>
-          <span className="item-sub">T{bi.tier} · {SLOT_LABEL[bi.slot]}{bi.upgradesFrom !== null ? ' · upgrade' : ''}</span>
-          {v && <span className={`badge ${v.badge}`}>{v.badge === 'core' ? 'Zergggy core' : 'Not core'}</span>}
+      <button className={`tile slot-${bi.slot}${v?.badge === 'not-core' ? ' off-core' : ''}`} data-item-id={bi.id} onClick={() => onOpen(bi.id)}
+        aria-label={`${n}. ${bi.name}, ${souls(bi.cost)} souls${v ? (v.badge === 'core' ? ', Zergggy core item' : ', not in Zergggy core set') : ''}. Open details`}>
+        <span className="tile-art">
+          <img src={img(item.image)} alt="" width={64} height={64} />
+          <span className="tile-tier" aria-hidden="true">{ROMAN[bi.tier] ?? bi.tier}</span>
+          {bi.upgradesFrom !== null && <span className="tile-up" aria-hidden="true">▲</span>}
+          {v?.badge === 'core' && <span className="tile-core" aria-hidden="true">★</span>}
         </span>
-        <span className="item-cost">
-          <b>{souls(bi.cost)}</b>
-          <small>Σ {souls(bi.runningTotal)}</small>
-        </span>
+        <span className="tile-name">{bi.name}</span>
+        <span className="tile-cost">{souls(bi.cost)}</span>
       </button>
     </li>
   )
