@@ -34,12 +34,12 @@ After `fetch-data`, the app and `npm run build` work fully offline. Snapshots ar
 
 ## How items are scored
 
-`score = 1.0·wr + 0.8·use + 0.7·val + 0.6·kit + 0.5·syn + 0.3·act`
+`score = 1.0·wr + 5.0·use + 0.7·val + 0.6·kit + 0.5·syn + 0.3·act`
 
 | Term | Weight | Input |
 |---|---|---|
 | `wr` | 1.0 | Win rate from `/v1/analytics/item-stats`, shrunk toward the tier baseline with a prior of 300 matches; 2 percentage points of lift = 1.0. Uses the high-badge (avg badge ≥ 70) row when the item has ≥400 high-badge matches. |
-| `use` | 0.8 | Pick rate, square-root scaled. |
+| `use` | 5.0 | Pick rate, square-root scaled. |
 | `val` | 0.7 | Stat points per 1,000 souls (table in `src/generator/config.ts`), z-scored within the item's tier. |
 | `kit` | 0.6 | Fit with the hero: stat multipliers derived from the hero's abilities and starting stats (for example, a hero whose abilities all deal damage weights spirit power up). |
 | `syn` | 0.5 | Average pair lift with items already chosen, from `/v1/analytics/item-permutation-stats` (pairs with ≥300 matches). |
@@ -68,9 +68,9 @@ The generator is a pure function of (hero, catalog, analytics, options): no rand
 - **Agreement %** = 0.7 × Dice overlap(build items, core set) + 0.3 × buy-order concordance. Concordance is the share of item pairs in both the build and his core set whose order matches his median buy time.
 - The app shows this as "how well the generator did". It is a report card, not an input; agreement is not 100% and is not meant to be.
 
-Current Infernus result (33.17 min median): one build, Spirit Burn, 55% agreement (8 of his 24 core items, 86% buy-order agreement). Before the change it was 53% / 48% / 53% across three builds.
+Current results (33.17 min median, one build per hero): Zergggy/Infernus 68%, Deathy/Lash 73%, Zergggy/Mina 78% (30 real matches each). At the earlier weight of 2.4 these were 55% / 59% / 60%. A plain "top 14 items by high-skill pick rate" list scores 64-83% on Lash and Mina, so this weight moves the generator close to that baseline; win rate now mostly breaks ties.
 
-**Not strictly held-out any more.** The pick-rate weight was raised from 0.8 to 2.4 after seeing agreement rise with it (0.8: 48-53%, 1.6: 53-56%, 2.4: 55-60%, 3.2: no further gain). The reason is aggregate: top-player pick rates are a stronger signal than win-rate lift. But the value was chosen by watching this score on 30 matches from one player, so treat 55% as mildly optimistic. The generator still never reads his file.
+**Not strictly held-out any more.** The pick-rate weight went from 0.8 to 2.4 to 5.0 after watching agreement on these three player/hero samples (weights 4-6 gave the same agreement; 7+ got worse; tier caps and slot quotas made no difference). Top-player pick rates are a stronger signal than win-rate lift, but the value was chosen using this score, so treat the numbers as optimistic. Cost: the chosen items' average win rate fell slightly (Lash 5.0 to 4.1 points above 50%, Mina 1.8 to 0.2). The generator still never reads any player's file.
 
 ## Personalization
 
