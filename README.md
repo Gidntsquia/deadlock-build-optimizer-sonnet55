@@ -72,6 +72,8 @@ Current results (33.17 min median, one build per hero): Zergggy/Infernus 68%, De
 
 **Not strictly held-out any more.** The pick-rate weight went from 0.8 to 2.4 to 5.0 after watching agreement on these three player/hero samples (weights 4-6 gave the same agreement; 7+ got worse; tier caps and slot quotas made no difference). Top-player pick rates are a stronger signal than win-rate lift, but the value was chosen using this score, so treat the numbers as optimistic. Cost: the chosen items' average win rate fell slightly (Lash 5.0 to 4.1 points above 50%, Mina 1.8 to 0.2). The generator still never reads any player's file.
 
+**Fresh check on 8 other hero/player pairs** (top Europe leaderboard player per hero, 30 real matches each; Wraith, Seven, Haze, Bebop, Ivy, Lady Geist, Abrams, Paradox). None of these were used to choose the weight. Mean agreement: pick-rate weight 2.4 → 56.7%, 5.0 → 58.0%, 12 → 61.4%; a plain top-14-by-pick-rate list → 57.4%. So the 68-78% above is mostly tuning on those three samples; on unseen pairs the gain is about 1-2 points, and the generator ends up about as good as the pick-rate list. Per pair it ranges from 47% (Paradox) to 72% (Bebop).
+
 ## Personalization
 
 From `data/user/match-history.json` (account 267836488). Standard mode = `game_mode 1`, `match_mode` 1 or 4, longer than 5 minutes (556 matches). Your median length (33.2 min) sets the soul budget, so late-game purchases scale to how long your games actually run. The card also shows your win rate on the selected hero when you have games on it.
