@@ -87,17 +87,6 @@ export default function App() {
             </div>
           </section>
 
-          <section className="card insight" aria-label="Personal insight">
-            <h3>Your insight</h3>
-            {personal.medianMatchMin !== null ? (
-              <p>
-                Your median standard match is <b>{personal.medianMatchMin} min</b> ({personal.standardMatches} games), so this
-                build’s soul budget is <b>{souls(result.budget)}</b> (≈1,150 souls/min){personal.heroWinRate !== null && <> — on {hero.name} you win <b>{pct(personal.heroWinRate)}</b> of {personal.heroMatches} games</>}.
-                The late-game purchases scale with that budget.
-              </p>
-            ) : <p className="dim">No standard-mode history found; using a default {result.medianMatchMin}-minute match.</p>}
-          </section>
-
           <section className="card">
             <h3>Buy order</h3>
             <BuildView build={build} catalog={catalogById} validation={validation} onOpenItem={setOpenItem} />
